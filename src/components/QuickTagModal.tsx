@@ -5,9 +5,9 @@ import {
   ChevronRight, ChevronDown, Check, Upload, Trash2,
 } from 'lucide-react';
 import {
-  QuickTag, TAG_COLOR_OPTIONS, GAME_CHANNEL_DATA, getColorHex,
-  type ShareVis, type GameNode,
+  TAG_COLOR_OPTIONS, GAME_CHANNEL_DATA, getColorHex,
 } from './QuickTagBar';
+import type { QuickTag, ShareVis, GameNode } from './QuickTagBar';
 import type { ViewItem } from './ViewSelectorDropdown';
 
 const F = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
