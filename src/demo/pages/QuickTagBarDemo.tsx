@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { QuickTagBar } from '../../components/QuickTagBar'
+import { QuickTagModal } from '../../components/QuickTagModal'
 import type { QuickTag } from '../../components/QuickTagBar'
 import { Section } from '../components/Section'
 import { DemoBox } from '../components/DemoBox'
@@ -59,7 +60,7 @@ const INITIAL_TAGS: QuickTag[] = [
 
 export function QuickTagBarDemo() {
   const [tags, setTags] = useState<QuickTag[]>(INITIAL_TAGS)
-  const [manageMsg, setManageMsg] = useState('')
+  const [showModal, setShowModal] = useState(false)
 
   const handleToggleTag = (id: string) => {
     setTags(prev => prev.map(t => t.id === id ? { ...t, active: !t.active } : t))
@@ -83,14 +84,21 @@ export function QuickTagBarDemo() {
           <QuickTagBar
             tags={tags}
             onToggleTag={handleToggleTag}
-            onManage={() => setManageMsg('点击了"管理快捷标签"按钮')}
+            onManage={() => setShowModal(true)}
             onReorderTags={handleReorder}
           />
         </DemoBox>
         <div style={{ fontSize: 13, color: '#8c8c8c', marginBottom: 16 }}>
-          {manageMsg && <span style={{ color: '#1677ff', marginRight: 12 }}>{manageMsg}</span>}
           已激活标签：<strong style={{ color: '#141414' }}>{activeTags.join('、') || '（无）'}</strong>
         </div>
+
+        {showModal && (
+          <QuickTagModal
+            tags={tags}
+            onSave={setTags}
+            onClose={() => setShowModal(false)}
+          />
+        )}
         <CodeBlock code={`import { QuickTagBar } from 'cetus-ui'
 import type { QuickTag } from 'cetus-ui'
 
