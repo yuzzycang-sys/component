@@ -6,7 +6,7 @@ import { CodeBlock } from '../components/CodeBlock'
 import { PropsTable } from '../components/PropsTable'
 
 export function FilterBarDemo() {
-  const [activeFilters, setActiveFilters] = useState<string[]>(['mainChannel', 'optimizer'])
+  const [activeFilters, setActiveFilters] = useState<string[]>(['mainChannel', 'optimizer', 'accountId', 'mediaCreativeMd5'])
   const [dateStart, setDateStart] = useState('2026-03-01')
   const [dateEnd, setDateEnd] = useState('2026-03-28')
   const [filterSelections, setFilterSelections] = useState<Record<string, string[]>>({

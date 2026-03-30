@@ -15,8 +15,17 @@ export const FILTER_GROUPS: FilterGroup[] = [
   {
     group: '广告属性',
     items: [
-      { key: 'accountId', label: '账号ID/名称/标签' },
+      { key: 'accountId', label: '账户ID/名称' },
+      { key: 'projectId', label: '项目ID/名称' },
       { key: 'adId', label: '广告ID/名称' },
+      { key: 'mediaCreativeId', label: '媒体素材ID/名称' },
+    ],
+  },
+  {
+    group: '素材信息',
+    items: [
+      { key: 'mediaCreativeMd5', label: '媒体素材MD5/名称' },
+      { key: 'creativeName', label: '素材名称' },
     ],
   },
   {
