@@ -8,18 +8,40 @@ const DATE_RANGE_KEYS = new Set(['adCreateTime']);
 import { PriceRangePicker } from './PriceRangePicker';
 import { MultiSelectChip } from './MultiSelectChip';
 import { AccountInputChip } from './AccountInputChip';
+import type { InputTab } from './AccountInputChip';
+// Keys that render as free-text multi-input (AccountInputChip) instead of dropdown
 const TEXT_INPUT_KEYS = new Set([
   'accountId', 'projectId', 'adId',
   'mediaCreativeId', 'mediaCreativeMd5', 'creativeName',
   'subChannel',
 ]);
-const TEXT_INPUT_ENTITY_LABELS: Record<string, string> = {
-  accountId: '账户', projectId: '项目', adId: '广告',
-  mediaCreativeId: '媒体素材', mediaCreativeMd5: '媒体素材', creativeName: '素材',
-  subChannel: '子渠道',
-};
-const TEXT_INPUT_ID_LABELS: Record<string, string> = {
-  mediaCreativeMd5: 'MD5',
+const TEXT_INPUT_TABS: Record<string, InputTab[]> = {
+  accountId:       [
+    { key: 'id',   label: '账户ID',       placeholder: '输入账户ID，支持多个' },
+    { key: 'name', label: '账户名称',     placeholder: '输入账户名称，支持多个' },
+  ],
+  projectId:       [
+    { key: 'id',   label: '项目ID',       placeholder: '输入项目ID，支持多个' },
+    { key: 'name', label: '项目名称',     placeholder: '输入项目名称，支持多个' },
+  ],
+  adId:            [
+    { key: 'id',   label: '广告ID',       placeholder: '输入广告ID，支持多个' },
+    { key: 'name', label: '广告名称',     placeholder: '输入广告名称，支持多个' },
+  ],
+  mediaCreativeId: [
+    { key: 'id',   label: '媒体素材ID',   placeholder: '输入媒体素材ID，支持多个' },
+    { key: 'name', label: '媒体素材名称', placeholder: '输入媒体素材名称，支持多个' },
+  ],
+  mediaCreativeMd5:[
+    { key: 'md5',  label: '媒体素材MD5',  placeholder: '输入媒体素材MD5，支持多个' },
+    { key: 'name', label: '媒体素材名称', placeholder: '输入媒体素材名称，支持多个' },
+  ],
+  creativeName:    [
+    { key: 'name', label: '素材名称',     placeholder: '输入素材名称，支持多个' },
+  ],
+  subChannel:      [
+    { key: 'id',   label: '子渠道标识',   placeholder: '输入子渠道标识，支持多个' },
+  ],
 };
 import { FILTER_CHIP_DATA } from './filterConfig';
 
@@ -109,7 +131,7 @@ export function FilterBar({
         所有筛选
       </Button>
 
-      {/* ── 消耗时间（permanent，无竖线） ── */}
+      {/* ── 消耗时间（永久） ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
         <span style={{ fontSize: 13, color: '#595959', whiteSpace: 'nowrap' }}>消耗时间</span>
         <DateRangeTrigger
@@ -120,12 +142,23 @@ export function FilterBar({
         />
       </div>
 
+      {/* ── 数据口径（永久，必填） ── */}
+      <MultiSelectChip
+        label="数据口径"
+        options={FILTER_CHIP_DATA['dataScope']?.options ?? []}
+        selected={filterSelections['dataScope'] || ['去刷号']}
+        onChange={sel => onFilterSelect('dataScope', sel.length ? sel : ['去刷号'])}
+        exclude={false}
+        onExcludeChange={() => {}}
+      />
+
       {/* ── Active filter chips（有竖分割线） ── */}
       {activeFilters.length > 0 && (
         <>
           <Divider type="vertical" style={{ height: 20 }} />
           <div style={{ display: 'contents' }}>
             {activeFilters.map(key => {
+              // Special case for priceRange
               if (key === 'priceRange') {
                 return (
                   <div key={key} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
@@ -160,6 +193,7 @@ export function FilterBar({
 
               const cfg = FILTER_CHIP_DATA[key];
 
+              // 广告创建时间：日期范围选择器，与消耗时间保持一致
               if (DATE_RANGE_KEYS.has(key)) {
                 const sel = filterSelections[key] || [];
                 return (
@@ -177,12 +211,10 @@ export function FilterBar({
 
               if (TEXT_INPUT_KEYS.has(key)) {
                 const isAccountKey = key === 'accountId';
-                const entityLabel = TEXT_INPUT_ENTITY_LABELS[key] ?? key;
                 return (
                   <div key={key} style={{ position: 'relative', opacity: isLocked ? 0.45 : 1 }}>
                     <AccountInputChip
-                      entityLabel={entityLabel}
-                      idLabel={TEXT_INPUT_ID_LABELS[key]}
+                      tabs={TEXT_INPUT_TABS[key]}
                       selected={filterSelections[key] || []}
                       onChange={sel => onFilterSelect(key, sel)}
                       exclude={isAccountKey ? accountExclude : !!filterExcludes[key]}
