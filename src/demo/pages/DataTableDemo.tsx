@@ -22,19 +22,20 @@ const DEMO_COMBOS: FilterCombination[] = [
 ]
 
 export function DataTableDemo() {
-  const [activeDims, setActiveDims] = useState<string[]>(['time', 'media', 'optimizer', 'game'])
+  const [activeDims, setActiveDims] = useState<string[]>(['time', 'game', 'optimizer'])
   const [mergeView, setMergeView] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterCombination | null>(null)
 
   const dimOptions = [
     { key: 'time', label: '时间' },
-    { key: 'media', label: '媒体' },
-    { key: 'optimizer', label: '优化师' },
     { key: 'game', label: '游戏' },
-    { key: 'channel', label: '主渠道' },
     { key: 'os', label: '系统' },
-    { key: 'region', label: '地区' },
-    { key: 'adtype', label: '广告类型' },
+    { key: 'mainChannel', label: '主渠道名称' },
+    { key: 'optimizer', label: '优化师' },
+    { key: 'dept', label: '部门' },
+    { key: 'bidStrategy', label: '竞价策略' },
+    { key: 'bidKilo', label: '出价(千元)' },
+    { key: 'bid', label: '出价' },
   ]
 
   return (
@@ -87,7 +88,7 @@ export function DataTableDemo() {
         <CodeBlock code={`import { DataTable } from 'cetus-ui'
 import type { FilterCombination } from 'cetus-ui'
 
-const [activeDims, setActiveDims] = useState(['time', 'media', 'optimizer'])
+const [activeDims, setActiveDims] = useState(['time', 'game', 'optimizer'])
 const [mergeView, setMergeView] = useState(false)
 const [activeFilter, setActiveFilter] = useState<FilterCombination | null>(null)
 
@@ -106,7 +107,7 @@ const [activeFilter, setActiveFilter] = useState<FilterCombination | null>(null)
       </Section>
 
       <PropsTable props={[
-        { name: 'activeDims', type: 'string[]', required: true, description: '激活的维度 key 列表，决定展示哪些列（time / media / optimizer / game / channel / os / region / adtype）' },
+        { name: 'activeDims', type: 'string[]', required: true, description: '激活的维度 key 列表，决定展示哪些列（time / game / os / mainChannel / subChannel / bizType / optimizer / dept / bidStrategy / optGoal 等 28 个维度）' },
         { name: 'hasData', type: 'boolean', required: true, description: '是否有数据（控制空状态展示）' },
         { name: 'activeFilter', type: 'FilterCombination | null', required: false, description: '当前指标筛选组合，null 表示不筛选' },
         { name: 'mergeView', type: 'boolean', required: false, default: 'false', description: '合并视图：相同维度值的相邻行合并显示' },

@@ -17,7 +17,7 @@ const INITIAL_COMBOS: FilterCombination[] = [
 
 export function TableToolBarDemo() {
   const [timeGranularity, setTimeGranularity] = useState<'day' | 'week' | 'month'>('day')
-  const [activeDims, setActiveDims] = useState<string[]>(['time', 'media', 'optimizer'])
+  const [activeDims, setActiveDims] = useState<string[]>(['time', 'game', 'optimizer'])
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
   const [mergeView, setMergeView] = useState(false)
   const [filterCombinations, setFilterCombinations] = useState<FilterCombination[]>(INITIAL_COMBOS)
@@ -82,7 +82,7 @@ import type { FilterCombination } from 'cetus-ui'
 import type { LocalFilters } from 'cetus-ui'
 
 const [timeGranularity, setTimeGranularity] = useState<'day' | 'week' | 'month'>('day')
-const [activeDims, setActiveDims] = useState<string[]>(['time', 'media'])
+const [activeDims, setActiveDims] = useState<string[]>(['time', 'game'])
 const [mergeView, setMergeView] = useState(false)
 const [filterCombinations, setFilterCombinations] = useState<FilterCombination[]>([])
 const [activeFilterId, setActiveFilterId] = useState<string | null>(null)

@@ -8,34 +8,84 @@ const F = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neu
 
 type Row = {
   id: string;
-  date: string; media: string; optimizer: string; game: string;
-  channel: string; os: string; region: string; adtype: string;
+  date: string; game: string; os: string; mainChannel: string; subChannel: string;
+  bizType: string; optimizer: string; dept: string;
+  bidStrategy: string; optGoal: string; deepOptGoal: string; deepOptMethod: string;
+  bidTool: string; deliveryMode: string;
+  accountId: string; projectId: string; adId: string;
+  mediaCreativeId: string; mediaCreativeMd5: string; creativeName: string;
+  bidKilo: string; bidHundred: string; bidTen: string; bidYuan: string; bid: string;
+  roiCoeff001: string; roiCoeff01: string; roiCoeff1: string; roiCoeff: string;
   spend: number; newDevices: number; newDeviceCost: number;
   newPaidUsers: number; newPaidCost: number;
   ltv1: number; ltv3: number; ltv7: number; ltv15: number; ltv30: number; ltv60: number;
   roi1: number; roi2: number; roi3: number; roi7: number; roi15: number; roi30: number; roi60: number;
 };
 
+const DIM_COMMON = {
+  r1: { game: '鱼乐', os: 'Android', mainChannel: '腾讯广告', subChannel: 'GDT-01', bizType: '买量', optimizer: '张磊', dept: '投放一部',
+    bidStrategy: 'oCPM', optGoal: '激活', deepOptGoal: '付费', deepOptMethod: '自动', bidTool: '智能出价', deliveryMode: '标准投放',
+    accountId: 'A10001', projectId: 'P2001', adId: 'AD30001', mediaCreativeId: 'MC40001', mediaCreativeMd5: 'a1b2c3d4', creativeName: '素材A-横版',
+    bidKilo: '(0,1000]', bidHundred: '(400,500]', bidTen: '(440,450]', bidYuan: '(449,450]', bid: '450.00',
+    roiCoeff001: '(1.257,1.258]', roiCoeff01: '(1.25,1.26]', roiCoeff1: '(1.2,1.3]', roiCoeff: '1.258' },
+  r2: { game: '大咖', os: 'iOS', mainChannel: '巨量引擎', subChannel: 'OCEAN-01', bizType: '买量', optimizer: '李明', dept: '投放二部',
+    bidStrategy: 'oCPM', optGoal: '注册', deepOptGoal: '首充', deepOptMethod: '手动', bidTool: '自动出价', deliveryMode: '标准投放',
+    accountId: 'A10003', projectId: 'P2002', adId: 'AD30003', mediaCreativeId: 'MC40003', mediaCreativeMd5: 'i9j0k1l2', creativeName: '素材C-方版',
+    bidKilo: '(1000,2000]', bidHundred: '(1100,1200]', bidTen: '(1190,1200]', bidYuan: '(1199,1200]', bid: '1200.00',
+    roiCoeff001: '(1.531,1.532]', roiCoeff01: '(1.53,1.54]', roiCoeff1: '(1.5,1.6]', roiCoeff: '1.532' },
+  r3: { game: '鱼乐', os: 'Android', mainChannel: '腾讯广告', subChannel: 'GDT-02', bizType: '品牌', optimizer: '王芳', dept: '投放一部',
+    bidStrategy: 'CPC', optGoal: '点击', deepOptGoal: '-', deepOptMethod: '-', bidTool: '手动出价', deliveryMode: '加速投放',
+    accountId: 'A10002', projectId: 'P2001', adId: 'AD30002', mediaCreativeId: 'MC40002', mediaCreativeMd5: 'e5f6g7h8', creativeName: '素材B-竖版',
+    bidKilo: '(1000,2000]', bidHundred: '(1300,1400]', bidTen: '(1370,1380]', bidYuan: '(1379,1380]', bid: '1380.00',
+    roiCoeff001: '(0.855,0.856]', roiCoeff01: '(0.85,0.86]', roiCoeff1: '(0.8,0.9]', roiCoeff: '0.856' },
+  r4: { game: '大咖', os: 'iOS', mainChannel: '巨量引擎', subChannel: 'OCEAN-02', bizType: '混合', optimizer: '陈刚', dept: '投放二部',
+    bidStrategy: 'CPA', optGoal: '付费', deepOptGoal: '深度付费', deepOptMethod: '自动', bidTool: '智能出价', deliveryMode: '加速投放',
+    accountId: 'A10004', projectId: 'P2002', adId: 'AD30004', mediaCreativeId: 'MC40004', mediaCreativeMd5: 'm3n4o5p6', creativeName: '素材D-横版',
+    bidKilo: '(1000,2000]', bidHundred: '(1400,1500]', bidTen: '(1490,1500]', bidYuan: '(1499,1500]', bid: '1500.00',
+    roiCoeff001: '(2.104,2.105]', roiCoeff01: '(2.10,2.11]', roiCoeff1: '(2.1,2.2]', roiCoeff: '2.105' },
+};
+
 const DATA: Row[] = [
-  { id: '1', date: '2026-02-01', media: '腾讯', optimizer: '张磊',  game: '鱼乐', channel: '品牌', os: 'Android', region: '华东', adtype: '图文',   spend: 52341, newDevices: 8234, newDeviceCost: 6.35, newPaidUsers: 412, newPaidCost: 127.0, ltv1: 0.12, ltv3: 0.35, ltv7: 0.89, ltv15: 1.24, ltv30: 1.56, ltv60: 2.14, roi1: 0.08, roi2: 0.14, roi3: 0.22, roi7: 0.62, roi15: 0.86, roi30: 1.09, roi60: 1.49 },
-  { id: '2', date: '2026-02-01', media: '字节', optimizer: '李明',  game: '大咖', channel: '效果', os: 'iOS',     region: '华南', adtype: '视频',   spend: 38920, newDevices: 6120, newDeviceCost: 6.36, newPaidUsers: 310, newPaidCost: 125.5, ltv1: 0.11, ltv3: 0.32, ltv7: 0.84, ltv15: 1.18, ltv30: 1.51, ltv60: 2.08, roi1: 0.07, roi2: 0.13, roi3: 0.21, roi7: 0.60, roi15: 0.83, roi30: 1.06, roi60: 1.43 },
-  { id: '3', date: '2026-02-01', media: '腾讯', optimizer: '王芳',  game: '鱼乐', channel: '品牌', os: 'Android', region: '华北', adtype: '图文',   spend: 29150, newDevices: 4580, newDeviceCost: 6.36, newPaidUsers: 228, newPaidCost: 127.9, ltv1: 0.13, ltv3: 0.37, ltv7: 0.91, ltv15: 1.28, ltv30: 1.59, ltv60: 2.19, roi1: 0.09, roi2: 0.15, roi3: 0.23, roi7: 0.63, roi15: 0.88, roi30: 1.11, roi60: 1.52 },
-  { id: '4', date: '2026-02-01', media: '字节', optimizer: '陈刚',  game: '大咖', channel: '效果', os: 'iOS',     region: '西南', adtype: '开屏',   spend: 45670, newDevices: 7230, newDeviceCost: 6.32, newPaidUsers: 368, newPaidCost: 124.1, ltv1: 0.10, ltv3: 0.30, ltv7: 0.82, ltv15: 1.15, ltv30: 1.48, ltv60: 2.03, roi1: 0.07, roi2: 0.12, roi3: 0.20, roi7: 0.58, roi15: 0.81, roi30: 1.04, roi60: 1.40 },
-  { id: '5', date: '2026-02-02', media: '腾讯', optimizer: '张磊',  game: '鱼乐', channel: '品牌', os: 'Android', region: '华东', adtype: '视频',   spend: 48920, newDevices: 7840, newDeviceCost: 6.24, newPaidUsers: 398, newPaidCost: 122.9, ltv1: 0.14, ltv3: 0.38, ltv7: 0.93, ltv15: 1.30, ltv30: 1.62, ltv60: 2.22, roi1: 0.09, roi2: 0.16, roi3: 0.24, roi7: 0.65, roi15: 0.90, roi30: 1.13, roi60: 1.54 },
-  { id: '6', date: '2026-02-02', media: '字节', optimizer: '李明',  game: '大咖', channel: '效果', os: 'iOS',     region: '华南', adtype: '信息流', spend: 35680, newDevices: 5620, newDeviceCost: 6.35, newPaidUsers: 283, newPaidCost: 126.1, ltv1: 0.11, ltv3: 0.33, ltv7: 0.86, ltv15: 1.20, ltv30: 1.53, ltv60: 2.10, roi1: 0.08, roi2: 0.13, roi3: 0.21, roi7: 0.61, roi15: 0.84, roi30: 1.07, roi60: 1.44 },
-  { id: '7', date: '2026-02-02', media: '腾讯', optimizer: '王芳',  game: '鱼乐', channel: '品牌', os: 'Android', region: '华北', adtype: '图文',   spend: 31240, newDevices: 4920, newDeviceCost: 6.35, newPaidUsers: 247, newPaidCost: 126.5, ltv1: 0.12, ltv3: 0.36, ltv7: 0.90, ltv15: 1.26, ltv30: 1.57, ltv60: 2.16, roi1: 0.08, roi2: 0.14, roi3: 0.22, roi7: 0.62, roi15: 0.87, roi30: 1.10, roi60: 1.50 },
-  { id: '8', date: '2026-02-02', media: '字节', optimizer: '陈刚',  game: '大咖', channel: '效果', os: 'iOS',     region: '西南', adtype: '开屏',   spend: 42310, newDevices: 6680, newDeviceCost: 6.33, newPaidUsers: 340, newPaidCost: 124.4, ltv1: 0.10, ltv3: 0.31, ltv7: 0.83, ltv15: 1.16, ltv30: 1.49, ltv60: 2.05, roi1: 0.07, roi2: 0.12, roi3: 0.20, roi7: 0.59, roi15: 0.82, roi30: 1.05, roi60: 1.41 },
+  { id: '1', date: '2026-02-01', ...DIM_COMMON.r1, spend: 52341, newDevices: 8234, newDeviceCost: 6.35, newPaidUsers: 412, newPaidCost: 127.0, ltv1: 0.12, ltv3: 0.35, ltv7: 0.89, ltv15: 1.24, ltv30: 1.56, ltv60: 2.14, roi1: 0.08, roi2: 0.14, roi3: 0.22, roi7: 0.62, roi15: 0.86, roi30: 1.09, roi60: 1.49 },
+  { id: '2', date: '2026-02-01', ...DIM_COMMON.r2, spend: 38920, newDevices: 6120, newDeviceCost: 6.36, newPaidUsers: 310, newPaidCost: 125.5, ltv1: 0.11, ltv3: 0.32, ltv7: 0.84, ltv15: 1.18, ltv30: 1.51, ltv60: 2.08, roi1: 0.07, roi2: 0.13, roi3: 0.21, roi7: 0.60, roi15: 0.83, roi30: 1.06, roi60: 1.43 },
+  { id: '3', date: '2026-02-01', ...DIM_COMMON.r3, spend: 29150, newDevices: 4580, newDeviceCost: 6.36, newPaidUsers: 228, newPaidCost: 127.9, ltv1: 0.13, ltv3: 0.37, ltv7: 0.91, ltv15: 1.28, ltv30: 1.59, ltv60: 2.19, roi1: 0.09, roi2: 0.15, roi3: 0.23, roi7: 0.63, roi15: 0.88, roi30: 1.11, roi60: 1.52 },
+  { id: '4', date: '2026-02-01', ...DIM_COMMON.r4, spend: 45670, newDevices: 7230, newDeviceCost: 6.32, newPaidUsers: 368, newPaidCost: 124.1, ltv1: 0.10, ltv3: 0.30, ltv7: 0.82, ltv15: 1.15, ltv30: 1.48, ltv60: 2.03, roi1: 0.07, roi2: 0.12, roi3: 0.20, roi7: 0.58, roi15: 0.81, roi30: 1.04, roi60: 1.40 },
+  { id: '5', date: '2026-02-02', ...DIM_COMMON.r1, spend: 48920, newDevices: 7840, newDeviceCost: 6.24, newPaidUsers: 398, newPaidCost: 122.9, ltv1: 0.14, ltv3: 0.38, ltv7: 0.93, ltv15: 1.30, ltv30: 1.62, ltv60: 2.22, roi1: 0.09, roi2: 0.16, roi3: 0.24, roi7: 0.65, roi15: 0.90, roi30: 1.13, roi60: 1.54 },
+  { id: '6', date: '2026-02-02', ...DIM_COMMON.r2, spend: 35680, newDevices: 5620, newDeviceCost: 6.35, newPaidUsers: 283, newPaidCost: 126.1, ltv1: 0.11, ltv3: 0.33, ltv7: 0.86, ltv15: 1.20, ltv30: 1.53, ltv60: 2.10, roi1: 0.08, roi2: 0.13, roi3: 0.21, roi7: 0.61, roi15: 0.84, roi30: 1.07, roi60: 1.44 },
+  { id: '7', date: '2026-02-02', ...DIM_COMMON.r3, spend: 31240, newDevices: 4920, newDeviceCost: 6.35, newPaidUsers: 247, newPaidCost: 126.5, ltv1: 0.12, ltv3: 0.36, ltv7: 0.90, ltv15: 1.26, ltv30: 1.57, ltv60: 2.16, roi1: 0.08, roi2: 0.14, roi3: 0.22, roi7: 0.62, roi15: 0.87, roi30: 1.10, roi60: 1.50 },
+  { id: '8', date: '2026-02-02', ...DIM_COMMON.r4, spend: 42310, newDevices: 6680, newDeviceCost: 6.33, newPaidUsers: 340, newPaidCost: 124.4, ltv1: 0.10, ltv3: 0.31, ltv7: 0.83, ltv15: 1.16, ltv30: 1.49, ltv60: 2.05, roi1: 0.07, roi2: 0.12, roi3: 0.20, roi7: 0.59, roi15: 0.82, roi30: 1.05, roi60: 1.41 },
 ];
 
 const DIM_COL_MAP: Record<string, { rowKey: keyof Row; label: string; width: number }> = {
-  time:      { rowKey: 'date',      label: '时间',     width: 104 },
-  media:     { rowKey: 'media',     label: '媒体',     width: 80  },
-  optimizer: { rowKey: 'optimizer', label: '优化师',   width: 80  },
-  game:      { rowKey: 'game',      label: '游戏',     width: 80  },
-  channel:   { rowKey: 'channel',   label: '主渠道',   width: 80  },
-  os:        { rowKey: 'os',        label: '系统',     width: 70  },
-  region:    { rowKey: 'region',    label: '地区',     width: 70  },
-  adtype:    { rowKey: 'adtype',    label: '广告类型', width: 90  },
+  time:             { rowKey: 'date',             label: '时间',           width: 104 },
+  game:             { rowKey: 'game',             label: '游戏',           width: 80  },
+  os:               { rowKey: 'os',               label: '系统',           width: 70  },
+  mainChannel:      { rowKey: 'mainChannel',      label: '主渠道名称',     width: 110 },
+  subChannel:       { rowKey: 'subChannel',       label: '子渠道标识',     width: 100 },
+  bizType:          { rowKey: 'bizType',          label: '业务类型',       width: 80  },
+  optimizer:        { rowKey: 'optimizer',        label: '优化师',         width: 80  },
+  dept:             { rowKey: 'dept',             label: '部门',           width: 90  },
+  bidStrategy:      { rowKey: 'bidStrategy',      label: '竞价策略',       width: 90  },
+  optGoal:          { rowKey: 'optGoal',          label: '优化目标',       width: 90  },
+  deepOptGoal:      { rowKey: 'deepOptGoal',      label: '深度转化目标',   width: 110 },
+  deepOptMethod:    { rowKey: 'deepOptMethod',    label: '深度优化方式',   width: 110 },
+  bidTool:          { rowKey: 'bidTool',          label: '出价工具',       width: 90  },
+  deliveryMode:     { rowKey: 'deliveryMode',     label: '投放模式',       width: 90  },
+  accountId:        { rowKey: 'accountId',        label: '账户ID/名称',    width: 120 },
+  projectId:        { rowKey: 'projectId',        label: '项目ID/名称',    width: 120 },
+  adId:             { rowKey: 'adId',             label: '广告ID/名称',    width: 120 },
+  mediaCreativeId:  { rowKey: 'mediaCreativeId',  label: '媒体素材ID/名称', width: 140 },
+  mediaCreativeMd5: { rowKey: 'mediaCreativeMd5', label: '媒体素材MD5/名称', width: 150 },
+  creativeName:     { rowKey: 'creativeName',     label: '素材名称',       width: 100 },
+  bidKilo:          { rowKey: 'bidKilo',          label: '出价(千元)',     width: 100 },
+  bidHundred:       { rowKey: 'bidHundred',       label: '出价(百元)',     width: 100 },
+  bidTen:           { rowKey: 'bidTen',           label: '出价(十元)',     width: 100 },
+  bidYuan:          { rowKey: 'bidYuan',          label: '出价(元)',       width: 90  },
+  bid:              { rowKey: 'bid',              label: '出价',           width: 80  },
+  roiCoeff001:      { rowKey: 'roiCoeff001',      label: 'ROI系数(0.001)', width: 130 },
+  roiCoeff01:       { rowKey: 'roiCoeff01',       label: 'ROI系数(0.01)',  width: 120 },
+  roiCoeff1:        { rowKey: 'roiCoeff1',        label: 'ROI系数(0.1)',   width: 120 },
+  roiCoeff:         { rowKey: 'roiCoeff',         label: 'ROI系数',        width: 90  },
 };
 
 type MetricCol = { key: keyof Row; label: string; width: number; tooltip: string; decimals?: number };
@@ -125,8 +175,14 @@ function aggregateRows(
     result.push({
       id: `agg_${idx++}`,
       date: activeDimKeys.includes('time') ? getPeriodKey(rep.date, gran) : rep.date,
-      media: rep.media, optimizer: rep.optimizer, game: rep.game,
-      channel: rep.channel, os: rep.os, region: rep.region, adtype: rep.adtype,
+      game: rep.game, os: rep.os, mainChannel: rep.mainChannel, subChannel: rep.subChannel,
+      bizType: rep.bizType, optimizer: rep.optimizer, dept: rep.dept,
+      bidStrategy: rep.bidStrategy, optGoal: rep.optGoal, deepOptGoal: rep.deepOptGoal,
+      deepOptMethod: rep.deepOptMethod, bidTool: rep.bidTool, deliveryMode: rep.deliveryMode,
+      accountId: rep.accountId, projectId: rep.projectId, adId: rep.adId,
+      mediaCreativeId: rep.mediaCreativeId, mediaCreativeMd5: rep.mediaCreativeMd5, creativeName: rep.creativeName,
+      bidKilo: rep.bidKilo, bidHundred: rep.bidHundred, bidTen: rep.bidTen, bidYuan: rep.bidYuan, bid: rep.bid,
+      roiCoeff001: rep.roiCoeff001, roiCoeff01: rep.roiCoeff01, roiCoeff1: rep.roiCoeff1, roiCoeff: rep.roiCoeff,
       spend:        sumSpend,
       newDevices:   sumNewDevices,
       newDeviceCost: sumNewDevices > 0 ? sumSpend / sumNewDevices : 0,
