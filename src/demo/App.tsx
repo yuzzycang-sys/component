@@ -14,6 +14,7 @@ import { DataTableDemo } from './pages/DataTableDemo'
 import { PaginationDemo } from './pages/PaginationDemo'
 import { ExportModalDemo } from './pages/ExportModalDemo'
 
+const VERSION = '1.0.0.1'
 const F = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 
 interface NavItem {
@@ -171,49 +172,76 @@ export function DemoApp() {
         <div style={{ height: 1, background: '#f0f0f0', margin: '0 0 8px' }} />
 
         {/* Nav groups */}
-        {NAV_GROUPS.map(group => (
-          <div key={group.title} style={{ padding: '8px 0' }}>
-            <div style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: '#8c8c8c',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              padding: '4px 20px 6px',
-            }}>
-              {group.title}
+        <div style={{ flex: 1 }}>
+          {NAV_GROUPS.map(group => (
+            <div key={group.title} style={{ padding: '8px 0' }}>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#8c8c8c',
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                padding: '4px 20px 6px',
+              }}>
+                {group.title}
+              </div>
+              {group.items.map(item => {
+                const active = hash === item.hash
+                return (
+                  <a
+                    key={item.hash}
+                    href={`#${item.hash}`}
+                    style={{
+                      display: 'block',
+                      padding: '6px 20px',
+                      fontSize: 13,
+                      textDecoration: 'none',
+                      borderRadius: 6,
+                      margin: '1px 8px',
+                      color: active ? '#1677ff' : '#333',
+                      background: active ? '#e6f4ff' : 'transparent',
+                      fontWeight: active ? 500 : 400,
+                      transition: 'background 0.15s, color 0.15s',
+                    }}
+                    onMouseEnter={e => { if (!active) (e.currentTarget as HTMLAnchorElement).style.background = '#f5f5f5' }}
+                    onMouseLeave={e => { if (!active) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent' }}
+                  >
+                    {item.label}
+                  </a>
+                )
+              })}
             </div>
-            {group.items.map(item => {
-              const active = hash === item.hash
-              return (
-                <a
-                  key={item.hash}
-                  href={`#${item.hash}`}
-                  style={{
-                    display: 'block',
-                    padding: '6px 20px',
-                    fontSize: 13,
-                    textDecoration: 'none',
-                    borderRadius: 6,
-                    margin: '1px 8px',
-                    color: active ? '#1677ff' : '#333',
-                    background: active ? '#e6f4ff' : 'transparent',
-                    fontWeight: active ? 500 : 400,
-                    transition: 'background 0.15s, color 0.15s',
-                  }}
-                  onMouseEnter={e => { if (!active) (e.currentTarget as HTMLAnchorElement).style.background = '#f5f5f5' }}
-                  onMouseLeave={e => { if (!active) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent' }}
-                >
-                  {item.label}
-                </a>
-              )
-            })}
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {/* Version */}
+        <div style={{
+          padding: '12px 20px',
+          borderTop: '1px solid #f0f0f0',
+          fontSize: 11,
+          color: '#bbb',
+          flexShrink: 0,
+        }}>
+          v{VERSION}
+        </div>
       </div>
 
       {/* Main content */}
-      <div style={{ flex: 1, overflowY: 'auto', background: '#fff' }}>
+      <div style={{ flex: 1, overflowY: 'auto', background: '#fff', position: 'relative' }}>
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 10,
+          display: 'flex', justifyContent: 'flex-end',
+          padding: '8px 16px 0',
+          pointerEvents: 'none',
+        }}>
+          <span style={{
+            fontSize: 11, color: '#fff', background: '#1677ff',
+            padding: '2px 10px', borderRadius: 10,
+            fontWeight: 500, letterSpacing: '0.02em',
+          }}>
+            v{VERSION}
+          </span>
+        </div>
         {renderPage(hash)}
       </div>
     </div>
