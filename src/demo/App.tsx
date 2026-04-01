@@ -14,7 +14,7 @@ import { DataTableDemo } from './pages/DataTableDemo'
 import { PaginationDemo } from './pages/PaginationDemo'
 import { ExportModalDemo } from './pages/ExportModalDemo'
 
-const VERSION = '1.0.0.4'
+const VERSION = '1.0.0.5'
 const F = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 
 interface NavItem {

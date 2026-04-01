@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Lock } from 'lucide-react'
+import { Lock, ShieldX, ArrowLeft, Link2 } from 'lucide-react'
 import { ViewBar } from '../../components/ViewBar'
 import type { ViewItem } from '../../components/ViewSelectorDropdown'
 import type { ShareMode } from '../../components/ShareViewModal'
@@ -9,6 +9,10 @@ import { CodeBlock } from '../components/CodeBlock'
 import { PropsTable } from '../components/PropsTable'
 
 const CURRENT_USER = '张磊'
+
+const SHARE_USER_NAMES: Record<string, string> = {
+  u1: '张磊', u2: '李明', u3: '王芳', u4: '陈刚', u5: '陈路遥', u6: '刘洋',
+}
 
 type TagStub = { id: string; label: string; owner: string; vis: 'private' | 'partial' | 'public'; authUsers: string[] }
 
@@ -26,8 +30,22 @@ function canUserAccessTag(userName: string, tag: TagStub): boolean {
   return false
 }
 
+function canUserAccessView(userName: string, view: ViewItem): boolean {
+  if (view.type === 'public') return true
+  if (view.owner === userName) return true
+  if (view.shareMode === 'public') return true
+  if (view.shareMode === 'specific') {
+    const sharedNames = (view.sharedWith ?? []).map(uid => SHARE_USER_NAMES[uid] ?? uid)
+    if (sharedNames.includes(userName)) return true
+  }
+  return false
+}
+
 type TagInfo = { id: string; label: string; owner: string; vis: string }
-type PageStatus = { type: 'OK' } | { type: 'NO_PERMISSION'; missingTagsInfo: TagInfo[] }
+type PageStatus =
+  | { type: 'OK' }
+  | { type: 'NO_PERMISSION'; missingTagsInfo: TagInfo[] }
+  | { type: 'VIEW_NO_PERMISSION'; viewName: string; owner: string; shareMode: string }
 
 const INITIAL_VIEWS: ViewItem[] = [
   { id: '1', name: '全量视图', type: 'mine', owner: '张磊', pinned: true, shareMode: 'private', sharedWith: [] },
@@ -36,6 +54,11 @@ const INITIAL_VIEWS: ViewItem[] = [
   { id: '4', name: '快手月度汇总', type: 'mine', owner: '张磊', pinned: false, shareMode: 'private', sharedWith: [] },
   { id: '5', name: '公共模板', type: 'public', owner: '管理员', pinned: false, shareMode: 'public', sharedWith: [] },
   { id: '6', name: '投放核心数据总览', type: 'shared', owner: '王芳', pinned: false, tag_ids: ['t3', 't4'] },
+]
+
+const EXTERNAL_VIEWS: ViewItem[] = [
+  { id: 'ext1', name: '赵云的秘密投放方案', type: 'shared', owner: '赵云', pinned: false, shareMode: 'private' },
+  { id: 'ext2', name: '内部ROI优化策略',   type: 'shared', owner: '王芳', pinned: false, shareMode: 'specific', sharedWith: ['u5', 'u6'] },
 ]
 
 function NoPermissionView({ missingTagsInfo }: { missingTagsInfo: TagInfo[] }) {
@@ -70,12 +93,69 @@ function NoPermissionView({ missingTagsInfo }: { missingTagsInfo: TagInfo[] }) {
   )
 }
 
+function ViewNoPermissionView({ viewName, owner, shareMode, onBack }: {
+  viewName: string; owner: string; shareMode: string; onBack: () => void
+}) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexDirection: 'column', gap: 20, padding: '48px 20px',
+    }}>
+      <div style={{
+        width: 64, height: 64, borderRadius: '50%',
+        background: 'linear-gradient(135deg, #fff1f0, #fff0ee)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: '0 4px 16px rgba(255, 77, 79, 0.12)',
+      }}>
+        <ShieldX size={30} color="#ff4d4f" />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 17, fontWeight: 600, color: '#141414', marginBottom: 8 }}>无权访问此视图</div>
+        <div style={{ fontSize: 13, color: '#8c8c8c', maxWidth: 400, lineHeight: 1.7 }}>
+          您尝试通过分享链接打开的视图暂无访问权限。请联系视图所有者为您开放权限。
+        </div>
+      </div>
+      <div style={{
+        width: '100%', maxWidth: 360, borderRadius: 8,
+        border: '1px solid #f0f0f0', background: '#fafafa', padding: '16px 20px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+          <span style={{ fontSize: 12, color: '#8c8c8c' }}>视图名称</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: '#141414' }}>{viewName}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+          <span style={{ fontSize: 12, color: '#8c8c8c' }}>所有者</span>
+          <span style={{ fontSize: 13, color: '#141414' }}>{owner}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 12, color: '#8c8c8c' }}>分享范围</span>
+          <span style={{ fontSize: 13, color: '#ff4d4f', fontWeight: 500 }}>
+            {shareMode === 'private' ? '仅创建者可见' : '指定人员'}
+          </span>
+        </div>
+      </div>
+      <button
+        onClick={onBack}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '8px 24px', borderRadius: 6, border: '1px solid #d9d9d9',
+          background: '#fff', cursor: 'pointer', fontSize: 13, color: '#595959',
+        }}
+      >
+        <ArrowLeft size={14} />
+        返回
+      </button>
+    </div>
+  )
+}
+
 export function ViewBarDemo() {
   const [views, setViews] = useState<ViewItem[]>(INITIAL_VIEWS)
   const [selectedView, setSelectedView] = useState<string | null>('全量视图')
   const [pinnedViews, setPinnedViews] = useState<string[]>(['全量视图', '腾讯-华东'])
   const [activePinnedTag, setActivePinnedTag] = useState<string | null>('全量视图')
   const [pageStatus, setPageStatus] = useState<PageStatus>({ type: 'OK' })
+  const [showShareLinkPanel, setShowShareLinkPanel] = useState(false)
 
   const handleTogglePin = (id: string) => {
     const view = views.find(v => v.id === id)
@@ -108,6 +188,23 @@ export function ViewBarDemo() {
     setSelectedView(name)
   }
 
+  const handleOpenSharedLink = (extView: ViewItem) => {
+    setShowShareLinkPanel(false)
+    if (!canUserAccessView(CURRENT_USER, extView)) {
+      setPageStatus({
+        type: 'VIEW_NO_PERMISSION',
+        viewName: extView.name,
+        owner: extView.owner ?? '未知',
+        shareMode: extView.shareMode ?? 'private',
+      })
+      setSelectedView(null)
+      setActivePinnedTag(null)
+      return
+    }
+    setPageStatus({ type: 'OK' })
+    handleSelectView(extView.name)
+  }
+
   const handleSaveNew = (name: string) => {
     const newView: ViewItem = {
       id: String(Date.now()),
@@ -126,7 +223,7 @@ export function ViewBarDemo() {
   }
 
   return (
-    <div style={{ padding: '40px 48px', maxWidth: 900 }}>
+    <div style={{ padding: '40px 48px', maxWidth: 900, position: 'relative' }}>
       <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 8 }}>ViewBar</h1>
       <p style={{ color: '#666', fontSize: 15, marginBottom: 40 }}>
         视图管理栏，支持选择/保存/固定视图，固定视图以标签形式展示在工具栏上。
@@ -158,6 +255,15 @@ export function ViewBarDemo() {
           <NoPermissionView missingTagsInfo={pageStatus.missingTagsInfo} />
         )}
 
+        {pageStatus.type === 'VIEW_NO_PERMISSION' && (
+          <ViewNoPermissionView
+            viewName={pageStatus.viewName}
+            owner={pageStatus.owner}
+            shareMode={pageStatus.shareMode}
+            onBack={() => setPageStatus({ type: 'OK' })}
+          />
+        )}
+
         <CodeBlock code={`import { ViewBar } from 'cetus-ui'
 import type { ViewItem } from 'cetus-ui'
 
@@ -186,6 +292,28 @@ const [activePinnedTag, setActivePinnedTag] = useState<string | null>(null)
             <li><code>广点通-核心ROI秘投</code> — 王芳私有标签（当前用户张磊无权限）</li>
             <li><code>抖音-内部测试包</code> — 陈刚部分可见标签（授权：李明、王芳，不含张磊）</li>
           </ul>
+        </div>
+      </Section>
+
+      <Section title="视图无权限场景（分享链接）">
+        <div style={{ fontSize: 13, color: '#666', marginBottom: 12, lineHeight: 1.8 }}>
+          点击下方按钮模拟"通过他人分享的链接打开视图"，触发视图级无权限空态。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          {EXTERNAL_VIEWS.map(ev => (
+            <button
+              key={ev.id}
+              onClick={() => handleOpenSharedLink(ev)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '8px 16px', borderRadius: 6, border: '1px solid #d9d9d9',
+                background: '#fff', cursor: 'pointer', fontSize: 13, color: '#595959',
+              }}
+            >
+              <Link2 size={14} />
+              {ev.name}
+            </button>
+          ))}
         </div>
       </Section>
 
