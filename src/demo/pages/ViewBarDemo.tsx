@@ -14,13 +14,16 @@ const SHARE_USER_NAMES: Record<string, string> = {
   u1: '张磊', u2: '李明', u3: '王芳', u4: '陈刚', u5: '陈路遥', u6: '刘洋',
 }
 
-type TagStub = { id: string; label: string; owner: string; vis: 'private' | 'partial' | 'public'; authUsers: string[] }
+const BLOCKED_MAIN_CHANNELS = new Set(['星海-TikTok-TK_xh01', '星海-百度-BD_xh01'])
+
+type TagStub = { id: string; label: string; owner: string; vis: 'private' | 'partial' | 'public'; authUsers: string[]; mainChannels?: string[] }
 
 const TAG_STUBS: TagStub[] = [
   { id: 't1', label: '头条-安卓-激活',    owner: '张磊', vis: 'public',  authUsers: [] },
   { id: 't2', label: '快手-全渠道',       owner: '李明', vis: 'public',  authUsers: [] },
   { id: 't3', label: '广点通-核心ROI秘投', owner: '王芳', vis: 'private', authUsers: [] },
   { id: 't4', label: '抖音-内部测试包',    owner: '陈刚', vis: 'partial', authUsers: ['李明', '王芳'] },
+  { id: 't53', label: '标签部分渠道无权限', owner: '李四', vis: 'public', authUsers: [], mainChannels: ['大咖-头条-头条btt', '大咖-快手-快手ksa', '星海-TikTok-TK_xh01', '星海-百度-BD_xh01'] },
 ]
 
 function canUserAccessTag(userName: string, tag: TagStub): boolean {
@@ -54,6 +57,7 @@ const INITIAL_VIEWS: ViewItem[] = [
   { id: '4', name: '快手月度汇总', type: 'mine', owner: '张磊', pinned: false, shareMode: 'private', sharedWith: [] },
   { id: '5', name: '公共模板', type: 'public', owner: '管理员', pinned: false, shareMode: 'public', sharedWith: [] },
   { id: '6', name: '投放核心数据总览', type: 'shared', owner: '王芳', pinned: false, tag_ids: ['t3', 't4'] },
+  { id: '7', name: '标签部分渠道无权限测试', type: 'shared', owner: '李四', pinned: false, tag_ids: ['t53'] },
 ]
 
 const EXTERNAL_VIEWS: ViewItem[] = [
@@ -291,6 +295,10 @@ const [activePinnedTag, setActivePinnedTag] = useState<string | null>(null)
           <ul style={{ margin: '4px 0', paddingLeft: 20 }}>
             <li><code>广点通-核心ROI秘投</code> — 王芳私有标签（当前用户张磊无权限）</li>
             <li><code>抖音-内部测试包</code> — 陈刚部分可见标签（授权：李明、王芳，不含张磊）</li>
+          </ul>
+          选择「<strong>标签部分渠道无权限测试</strong>」视图可触发 Conflict D/F 场景。该视图包含标签：
+          <ul style={{ margin: '4px 0', paddingLeft: 20 }}>
+            <li><code>标签部分渠道无权限</code> — 李四公开标签，但其中包含当前用户无权限的渠道（星海-TikTok、星海-百度）</li>
           </ul>
         </div>
       </Section>
